@@ -41,6 +41,11 @@ ImageViewer::ImageViewer(QWidget *parent)
     scrollArea->setBackgroundRole(QPalette::Dark);
     scrollArea->setWidget(imageLabel);
     scrollArea->setVisible(false);
+    scrollArea->setAlignment(Qt::AlignCenter);
+    // scrollArea->setAttribute( Qt::WA_NoSystemBackground, true );
+    // parent->setAttribute(Qt::WA_TranslucentBackground, true);
+    // scrollArea->setAttribute( Qt::WA_OpaquePaintEvent, true );
+    // scrollArea->setStyleSheet("background-color: rgba( 255, 255, 255, 0% );" );
     setCentralWidget(scrollArea);
 
     createActions();
@@ -65,7 +70,6 @@ void ImageViewer::printFileList()
         qDebug()<<s.toStdString().c_str()<<"\n";
         it++;
     }
-    qDebug()<<"akilslaoks\n";
 }
 
 //! [0]
@@ -106,6 +110,7 @@ void ImageViewer::setImage(const QImage &newImage)
     // if (image.colorSpace().isValid())
         // image.convertToColorSpace(QColorSpace::SRgb);
     imageLabel->setPixmap(QPixmap::fromImage(image));
+    // imageLabel->setAlignment(Qt::AlignHCenter | Qt::AlignVCenter);
 //! [4]
     scaleFactor = 1.0;
 
@@ -224,6 +229,8 @@ void ImageViewer::nextImage()
     dq.push_back(imgPath);
     imgPath = dq.front();
     loadFile(imgPath);
+    scrollArea->verticalScrollBar()->setValue(0);
+    // scaleImage(0.0);
     dq.pop_front();
 }
 
