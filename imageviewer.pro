@@ -2,10 +2,12 @@ QT += core gui widgets
 requires(qtConfig(filedialog))
 qtHaveModule(printsupport): QT += printsupport
 
-HEADERS       = imageviewer.h
-SOURCES       = imageviewer.cpp \
-                main.cpp
+HEADERS       = ./src/imageviewer.h
+SOURCES       = ./src/imageviewer.cpp \
+                ./src/main.cpp
 
+message($$OUT_PWD)
+TARGET = ./build/imageviewer
 # install
-target.path = $$[QT_INSTALL_EXAMPLES]/widgets/widgets/imageviewer
+target.path = $$[OUT_PWD]/build/
 INSTALLS += target
