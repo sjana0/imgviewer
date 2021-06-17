@@ -56,6 +56,18 @@ bool ImageViewer::isImg(const QString &fileName)
     return newImage.isNull();
 }
 
+void ImageViewer::printFileList()
+{
+    std::deque<QString>::iterator it = dq.begin();
+    while (it<dq.end())
+    {
+        QString s = *it;
+        qDebug()<<s.toStdString().c_str()<<"\n";
+        it++;
+    }
+    qDebug()<<"akilslaoks\n";
+}
+
 //! [0]
 //! [2]
 
@@ -107,40 +119,45 @@ void ImageViewer::setImage(const QImage &newImage)
         imageLabel->adjustSize();
 }
 
-void ImageViewer::setOths(const QString &fileName)
+void ImageViewer::setOths(const QString &filePath)
 {
-    imgName = fileName;
+    imgPath = filePath;
 
-    QFileInfo* tempFileInfo = new QFileInfo(fileName);
+    QFileInfo* tempFileInfo = new QFileInfo(filePath);
     
     QDir dir = tempFileInfo->dir();
     tempFileInfo->~QFileInfo();
-    dir.setFilter(QDir::Files | QDir::Hidden | QDir::NoSymLinks);
+    dir.setFilter(QDir::Files);
+    dir.setSorting(QDir::Time | QDir::Reversed);
     QFileInfoList list = dir.entryInfoList();
     int i = 0;
-    QString fileInfoName = list.at(i).filePath();
-    while(fileInfoName != fileName)
+    QString fileInfoPath = list.at(i).filePath();
+    qDebug()<<"set others\n";
+    while(fileInfoPath != filePath && i < list.size())
     {
-        // qDebug()<<reader.format()<<"\n";
-        if(!isImg(fileInfoName))
+        if(!isImg(fileInfoPath))
         {
-            dq.push_back(fileInfoName);
+            // qDebug()<<fileInfoPath.toStdString().c_str()<<"\n";
+            dq.push_back(fileInfoPath);
         }
         i++;
-        fileInfoName = list.at(i).filePath();
+        fileInfoPath = list.at(i).filePath();
     }
     i = list.size() - 1;
-    fileInfoName = list.at(i).filePath();
-    while(fileInfoName != fileName)
+    fileInfoPath = list.at(i).filePath();
+    while(fileInfoPath != filePath && i >= 0)
     {
         // qDebug()<<reader.format()<<"\n";
-        if(!isImg(fileInfoName))
+        if(!isImg(fileInfoPath))
         {
-            dq.push_front(fileInfoName);
+            // qDebug()<<fileInfoPath.toStdString().c_str()<<"\n";
+            dq.push_front(fileInfoPath);
         }
         i--;
-        fileInfoName = list.at(i).filePath();
+        fileInfoPath = list.at(i).filePath();
     }
+    qDebug()<<"print\n\n\n\n";
+    printFileList();
 }
 //! [4]
 
@@ -185,6 +202,10 @@ static void initializeImageFileDialog(QFileDialog &dialog, QFileDialog::AcceptMo
 
 void ImageViewer::open()
 {
+    if(!ImageViewer::dq.empty())
+    {
+        ImageViewer::dq.clear();
+    }
     QFileDialog dialog(this, tr("Open File"));
     initializeImageFileDialog(dialog, QFileDialog::AcceptOpen);
     while (dialog.exec() == QDialog::Accepted && !loadFile(dialog.selectedFiles().first())) {}
@@ -201,17 +222,17 @@ void ImageViewer::saveAs()
 
 void ImageViewer::nextImage()
 {
-    dq.push_back(imgName);
-    imgName = dq.front();
-    loadFile(imgName);
+    dq.push_back(imgPath);
+    imgPath = dq.front();
+    loadFile(imgPath);
     dq.pop_front();
 }
 
 void ImageViewer::prevImage()
 {
-    dq.push_front(imgName);
-    imgName = dq.back();
-    loadFile(imgName);
+    dq.push_front(imgPath);
+    imgPath = dq.back();
+    loadFile(imgPath);
     dq.pop_back();
 }
 

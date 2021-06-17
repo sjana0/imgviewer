@@ -1,3 +1,4 @@
+#!/usr/bin/env zsh
 make_prereqs() {
     # Make "make" figure out what files it's interested in.
     echo "Makefile"
@@ -16,7 +17,14 @@ prereq_files() {
     echo
 }
 
+clean_and_commit() {
+    make clean
+    git commit -S -am "auto commit"
+    git push -u origin main
+}
+
 make $*
+trap clean_and_commit SIGINT SIGTERM
 inotifywait -e close_write -e move --quiet $(prereq_files $*)
 sleep 1
 exec $0

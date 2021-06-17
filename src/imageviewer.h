@@ -44,7 +44,6 @@ private slots:
     void about();
     void nextImage();
     void prevImage();
-    bool isImg(const QString &fileName);
 
 private:
     void createActions();
@@ -52,12 +51,14 @@ private:
     void updateActions();
     bool saveFile(const QString &fileName);
     void setImage(const QImage &newImage);
-    void setOths(const QString &fileName);
+    void setOths(const QString &filePath);
     void scaleImage(double factor);
     void adjustScrollBar(QScrollBar *scrollBar, double factor);
+    bool isImg(const QString &fileName);
+    void printFileList();
 
     QImage image;
-    QString imgName;
+    QString imgPath;
     std::deque <QString> dq;
     QLabel *imageLabel;
     QScrollArea *scrollArea;
