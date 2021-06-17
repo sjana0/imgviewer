@@ -1,0 +1,22 @@
+make_prereqs() {
+    # Make "make" figure out what files it's interested in.
+    echo "Makefile"
+    find $MAKEWATCH
+    make -dnr $* | tr ' ' '\n' | \
+        grep ".*'.$" | grep -o '\w.*\b'
+}
+
+prereq_files() {
+    # prerequisites mentioned in a Makefile
+    # that are extant files
+    echo ' '
+    for f in `make_prereqs $* | sort -u`; do
+        [ -e $f ] && echo -n "$f ";
+    done
+    echo
+}
+
+make $*
+inotifywait -e close_write -e move --quiet $(prereq_files $*)
+sleep 1
+exec $0
