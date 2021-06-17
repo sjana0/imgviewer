@@ -92,7 +92,6 @@ bool ImageViewer::loadFile(const QString &fileName)
         setOths(fileName);
     }
 
-
     setWindowFilePath(fileName);
 
     const QString message = tr("Opened \"%1\", %2x%3, Depth: %4")
