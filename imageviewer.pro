@@ -6,7 +6,7 @@ HEADERS       = ./src/imageviewer.h
 SOURCES       = ./src/imageviewer.cpp \
                 ./src/main.cpp
 
-TARGET = imageviewer
+TARGET = ./build/imageviewer
 # install
 target.path = $$[OUT_PWD]/build/
 INSTALLS += target
