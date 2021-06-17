@@ -130,8 +130,6 @@ void ImageViewer::setOths(const QString &filePath)
     dir.setFilter(QDir::Files);
     dir.setSorting(QDir::Time | QDir::Reversed);
     QFileInfoList list = dir.entryInfoList();
-
-    
     int i = 0;
     QString fileInfoPath = list.at(i).filePath();
     qDebug()<<"set others\n";

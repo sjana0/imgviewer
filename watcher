@@ -21,6 +21,7 @@ clean_and_commit() {
     make clean
     git commit -S -am "auto commit"
     git push -u origin main
+    exit 0
 }
 
 make $*
