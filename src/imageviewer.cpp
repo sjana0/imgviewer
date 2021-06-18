@@ -137,7 +137,6 @@ void ImageViewer::setOths(const QString &filePath)
     QFileInfoList list = dir.entryInfoList();
     int i = 0;
     QString fileInfoPath = list.at(i).filePath();
-    qDebug()<<"set others\n";
     while(fileInfoPath != filePath && i < list.size())
     {
         if(!isImg(fileInfoPath))
@@ -161,8 +160,7 @@ void ImageViewer::setOths(const QString &filePath)
         i--;
         fileInfoPath = list.at(i).filePath();
     }
-    qDebug()<<"print\n\n\n\n";
-    printFileList();
+    // printFileList();
 }
 //! [4]
 
