@@ -21,7 +21,10 @@ clean_and_commit() {
     make clean
     chmod +x ./.watcher_env
     source ./.watcher_env
+    temp=$((COMMIT+1))
+    echo "export COMMIT=$temp" > ./.watcher_env
     git add -A
+    echo "Give a commit message:"
     read commit_msg
     if [[ -z "$commit_msg" ]]
     then
@@ -31,8 +34,6 @@ clean_and_commit() {
         git commit -S -am "$commit_msg"
         git push -u origin main
     fi
-    COMMIT=$((COMMIT+1))
-    echo "export COMMIT=$COMMIT" > ./.watcher_env
     exit 0
 }
 
