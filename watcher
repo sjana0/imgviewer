@@ -21,10 +21,14 @@ clean_and_commit() {
     make clean
     chmod +x ./.watcher_env
     source ./.watcher_env
+    git add -A
     read commit_msg
     if [[ -z "$commit_msg" ]]
     then
-        git commit -S -am "auto commit $COMMIT"
+        git commit -S -am "auto commit msg $COMMIT"
+        git push -u origin main
+    else
+        git commit -S -am "$commit_msg"
         git push -u origin main
     fi
     COMMIT=$((COMMIT+1))
