@@ -34,6 +34,8 @@ public:
 private slots:
     void open();
     void saveAs();
+    void fullScreen();
+    void escapeFullScreen();
     void print();
     void copy();
     void paste();
@@ -63,6 +65,7 @@ private:
     QLabel *imageLabel;
     QScrollArea *scrollArea;
     double scaleFactor = 1;
+    bool isF = false;
 
 #if defined(QT_PRINTSUPPORT_LIB) && QT_CONFIG(printer)
     QPrinter printer;

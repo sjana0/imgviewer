@@ -34,6 +34,10 @@ ImageViewer::ImageViewer(QWidget *parent)
    : QMainWindow(parent), imageLabel(new QLabel)
    , scrollArea(new QScrollArea)
 {
+    this->setWindowFlags(Qt::Window);
+    this->setAttribute(Qt::WA_TranslucentBackground, true);
+    this->setStyleSheet("background-color: rgba(158, 150, 150, 0.99)");
+
     imageLabel->setBackgroundRole(QPalette::Base);
     imageLabel->setSizePolicy(QSizePolicy::Ignored, QSizePolicy::Ignored);
     imageLabel->setScaledContents(true);
@@ -42,10 +46,7 @@ ImageViewer::ImageViewer(QWidget *parent)
     scrollArea->setWidget(imageLabel);
     scrollArea->setVisible(false);
     scrollArea->setAlignment(Qt::AlignCenter);
-    // scrollArea->setAttribute( Qt::WA_NoSystemBackground, true );
-    // parent->setAttribute(Qt::WA_TranslucentBackground, true);
-    // scrollArea->setAttribute( Qt::WA_OpaquePaintEvent, true );
-    // scrollArea->setStyleSheet("background-color: rgba( 255, 255, 255, 0% );" );
+    scrollArea->setStyleSheet("background-color: rgba(62, 74, 79, 0.7)");
     setCentralWidget(scrollArea);
 
     createActions();
@@ -178,6 +179,24 @@ bool ImageViewer::saveFile(const QString &fileName)
     const QString message = tr("Wrote \"%1\"").arg(QDir::toNativeSeparators(fileName));
     statusBar()->showMessage(message);
     return true;
+}
+
+void ImageViewer::fullScreen()
+{
+    if(!isF)
+    {
+        this->showFullScreen();
+        this->isF = true;
+    }
+}
+
+void ImageViewer::escapeFullScreen()
+{
+    if(isF)
+    {
+        this->showNormal();
+        this->isF = false;
+    }
 }
 
 //! [1]
@@ -367,6 +386,12 @@ void ImageViewer::createActions()
 
     QAction *rightOpenAct = fileMenu->addAction(tr("&Next..."), this, &ImageViewer::nextImage);
     rightOpenAct->setShortcut(tr("Right"));
+
+    QAction *fullScr = fileMenu->addAction(tr("&Full Screen..."), this, &ImageViewer::fullScreen);
+    fullScr->setShortcut(tr("F"));
+
+    QAction *escFullScr = fileMenu->addAction(tr("&Full Screen..."), this, &ImageViewer::escapeFullScreen);
+    escFullScr->setShortcut(tr("esc"));
 
     QAction *leftOpenAct = fileMenu->addAction(tr("&Prev..."), this, &ImageViewer::prevImage);
     leftOpenAct->setShortcut(tr("Left"));
