@@ -19,8 +19,16 @@ prereq_files() {
 
 clean_and_commit() {
     make clean
-    git commit -S -am "auto commit"
-    git push -u origin main
+    chmod +x ./.watcher_env
+    source ./.watcher_env
+    read commit_msg
+    if [[ -z "$commit_msg" ]]
+    then
+        git commit -S -am "auto commit $COMMIT"
+        git push -u origin main
+    fi
+    COMMIT=$((COMMIT+1))
+    echo "export COMMIT=$COMMIT" > ./.watcher_env
     exit 0
 }
 
