@@ -8,5 +8,5 @@ SOURCES       = ./src/imageviewer.cpp \
 
 TARGET = ./build/imageviewer
 # install
-target.path = $$[OUT_PWD]/build/
+target.path = /usr/local/bin
 INSTALLS += target
