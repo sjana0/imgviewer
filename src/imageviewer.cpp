@@ -34,6 +34,7 @@ ImageViewer::ImageViewer(QWidget *parent)
    : QMainWindow(parent), imageLabel(new QLabel)
    , scrollArea(new QScrollArea)
 {
+    setAcceptDrops(true);
     this->setWindowFlags(Qt::Window);
     this->setAttribute(Qt::WA_TranslucentBackground, true);
     this->setStyleSheet("background-color: rgba(158, 150, 150, 0.99)");
@@ -73,11 +74,27 @@ void ImageViewer::printFileList()
     }
 }
 
+void ImageViewer::dragEnterEvent(QDragEnterEvent *e)
+{
+    if (e->mimeData()->hasUrls()) {
+        e->acceptProposedAction();
+    }
+}
+
+void ImageViewer::dropEvent(QDropEvent *e)
+{
+    foreach (const QUrl &url, e->mimeData()->urls()) {
+        const QString fileName = url.toLocalFile();
+        this->loadFile(fileName);
+    }
+}
+
 //! [0]
 //! [2]
 
 bool ImageViewer::loadFile(const QString &fileName)
 {
+    qDebug() << "here\n";
     QImageReader reader(fileName);
     reader.setAutoTransform(true);
     const QImage newImage = reader.read();

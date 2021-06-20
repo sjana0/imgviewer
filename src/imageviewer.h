@@ -4,6 +4,8 @@
 #include <QMainWindow>
 #include <QImage>
 #include <QFileInfo>
+#include <QDragEnterEvent>
+#include <QDropEvent>
 #include <iostream>
 #include <deque>
 #if defined(QT_PRINTSUPPORT_LIB)
@@ -58,6 +60,8 @@ private:
     void adjustScrollBar(QScrollBar *scrollBar, double factor);
     bool isImg(const QString &fileName);
     void printFileList();
+    void dragEnterEvent(QDragEnterEvent *e);
+    void dropEvent(QDropEvent *e);
 
     QImage image;
     QString imgPath;
