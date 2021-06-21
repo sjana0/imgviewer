@@ -1,4 +1,4 @@
-#include "imageviewer.h"
+#include "imgview.h"
 
 #include <QApplication>
 #include <QClipboard>

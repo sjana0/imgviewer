@@ -1,7 +1,7 @@
 #include <QApplication>
 #include <QCommandLineParser>
 
-#include "imageviewer.h"
+#include "imgview.h"
 
 int main(int argc, char *argv[])
 {
