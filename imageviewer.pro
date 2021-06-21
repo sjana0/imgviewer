@@ -8,5 +8,5 @@ SOURCES       = ./src/imageviewer.cpp \
 
 TARGET = ./build/imageviewer
 # install
-target.path = /usr/local/bin
+target.path = /home/kchn/.local/bin
 INSTALLS += target

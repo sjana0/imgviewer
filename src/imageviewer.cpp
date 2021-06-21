@@ -18,6 +18,8 @@
 #include <QScrollBar>
 #include <QStandardPaths>
 #include <QStatusBar>
+#include <QMimeDatabase>
+#include <QMimeType>
 #include <iostream>
 #include <QDebug>
 
@@ -94,7 +96,6 @@ void ImageViewer::dropEvent(QDropEvent *e)
 
 bool ImageViewer::loadFile(const QString &fileName)
 {
-    qDebug() << "here\n";
     QImageReader reader(fileName);
     reader.setAutoTransform(true);
     const QImage newImage = reader.read();
@@ -232,10 +233,28 @@ static void initializeImageFileDialog(QFileDialog &dialog, QFileDialog::AcceptMo
     for (const QByteArray &mimeTypeName : supportedMimeTypes)
         mimeTypeFilters.append(mimeTypeName);
     mimeTypeFilters.sort();
+
+    QMimeDatabase mimeDB;
+    QStringList allSuppFormats;
+
+    for(const QString& mimeTypeFilter: mimeTypeFilters) {
+        QMimeType mimeType = mimeDB.mimeTypeForName(mimeTypeFilter);
+        if(mimeType.isValid()) {
+            allSuppFormats.append(mimeType.globPatterns());
+        }
+    }
+    QString allSuppFormatsFilter = QString("All supported formats (%1)").arg(allSuppFormats.join(' '));
+    
+    dialog.setFileMode(QFileDialog::ExistingFile);
     dialog.setMimeTypeFilters(mimeTypeFilters);
-    dialog.selectMimeTypeFilter("image/jpeg");
-    if (acceptMode == QFileDialog::AcceptSave)
-        dialog.setDefaultSuffix("jpg");
+    QStringList nameFilters = dialog.nameFilters();
+    nameFilters.append(allSuppFormatsFilter);
+    dialog.setNameFilters(nameFilters);
+    dialog.selectNameFilter(allSuppFormatsFilter);
+    
+    // dialog.selectMimeTypeFilter("image/jpeg");
+    // if (acceptMode == QFileDialog::AcceptSave)
+    //     dialog.setDefaultSuffix("jpg");
 }
 
 void ImageViewer::open()
