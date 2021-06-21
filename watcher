@@ -19,20 +19,25 @@ prereq_files() {
 
 clean_and_commit() {
     make clean
-    chmod +x ./.watcher_env
-    source ./.watcher_env
-    temp=$((COMMIT+1))
-    echo "export COMMIT=$temp" > ./.watcher_env
-    git add -A
-    echo "Give a commit message:"
-    read commit_msg
-    if [[ -z "$commit_msg" ]]
-    then
-        git commit -S -am "auto commit msg $COMMIT"
-        git push -u origin main
-    else
-        git commit -S -am "$commit_msg"
-        git push -u origin main
+    echo "want to commit to git"
+	read msg
+	if [[ "$msg" == "y" ]]
+	then
+        chmod +x ./.watcher_env
+        source ./.watcher_env
+        temp=$((COMMIT+1))
+        echo "export COMMIT=$temp" > ./.watcher_env
+        git add -A
+        echo "Give a commit message:"
+        read commit_msg
+        if [[ -z "$commit_msg" ]]
+        then
+            git commit -S -am "auto commit msg $COMMIT"
+            git push -u origin main
+        else
+            git commit -S -am "$commit_msg"
+            git push -u origin main
+        fi
     fi
     exit 0
 }
