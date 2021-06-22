@@ -115,11 +115,13 @@ bool ImageViewer::loadFile(const QString &fileName)
         setOths(fileName);
     }
 
-    setWindowFilePath(fileName);
+    QFileInfo flInfo(fileName);
+    setWindowFilePath(flInfo.baseName());
+    flInfo.~QFileInfo();
 
     const QString message = tr("Opened \"%1\", %2x%3, Depth: %4")
         .arg(QDir::toNativeSeparators(fileName)).arg(image.width()).arg(image.height()).arg(image.depth());
-    statusBar()->showMessage(message);
+    statusBar()->showMessage(message, 3000);
     return true;
 }
 
