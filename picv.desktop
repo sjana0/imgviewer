@@ -1,6 +1,6 @@
 [Desktop Entry]
 Name=picv
-Exec=/home/kchn/.local/bin/imgview
+Exec=/home/kchn/.local/bin/picv
 StartupNotify=true
 Terminal=false
 Icon=/home/kchn/imageviewer/ico.png
