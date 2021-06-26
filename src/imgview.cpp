@@ -20,8 +20,9 @@
 #include <QStatusBar>
 #include <QMimeDatabase>
 #include <QMimeType>
-#include <iostream>
 #include <QDebug>
+
+#include <iostream>
 
 #if defined(QT_PRINTSUPPORT_LIB)
 #  include <QtPrintSupport/qtprintsupportglobal.h>
@@ -50,9 +51,15 @@ ImageViewer::ImageViewer(QWidget *parent)
 	scrollArea->setVisible(false);
 	scrollArea->setAlignment(Qt::AlignCenter);
 	scrollArea->setStyleSheet("background-color: rgba(62, 74, 79, 0.7)");
-	setMouseTracking(true);
+	this->setMouseTracking(true);
+	scrollArea->setMouseTracking(true);
+	imageLabel->setMouseTracking(true);
 	setCentralWidget(scrollArea);
-	// QWidget::setAttribute(Qt::WA_MouseTracking);
+	timer = new QTimer(this);
+	connect(timer, SIGNAL(timeout()), this, SLOT(menuBarHide()));
+	// connect(timer, SIGNAL(timeout()), this, SLOT(menuBarHide()));
+	// timer->stop();
+	QWidget::setAttribute(Qt::WA_MouseTracking);
 
 	createActions();
 
@@ -93,16 +100,46 @@ void ImageViewer::dropEvent(QDropEvent *e)
 	}
 }
 
-void ImageViewer::enterEvent(QEvent *event)
+void ImageViewer::menuBarHide()
 {
-	qDebug()<<"enter: "<<event->type()<<"\n";
-	// if(hasMouseTracking())
-	if(event->type() == QEvent::ToolTip)
+	menuBar()->setVisible(false);
+	statusBar()->setVisible(false);
+	timer->stop();
+}
+
+void ImageViewer::mouseMoveEvent(QMouseEvent *event)
+{
+	// qDebug()<<"timer id: \n"<<timer->timerId();
+	if(!image.isNull())
 	{
-		qDebug()<<"ok1\n";
-		// return true;
+		static int menuh = this->menuBar()->QWidget::size().height();
+		static int statush = this->statusBar()->size().height();
+		int statusposy = this->statusBar()->pos().y();
+		int y = event->y();
+		// qDebug()<<"statusposy: "<<statusposy<<" "<<"statush: "<<statush<<" "<<"menuh: "<<menuh<<"\n";
+		// qDebug()<<"enter: "<<event->type()<<" "<<"pos: "<<event->x()<<" "<<event->y()<<"\n\n";
+		// qDebug()<<"not null\n";
+		if((y < menuh && y >= 0) || (y > statusposy && y < (statush + statusposy)))
+		{
+			// qDebug()<<"in zone\n"<<timer->timerId();
+			if(timer->timerId() != -1)
+			{
+				// qDebug()<<"active\n";
+				// timer->stop();
+				// timer->start();
+				timer->setInterval(5000);
+				// qDebug()<<"id = "<<timer->timerId()<<"\n";
+				// timer->start(5000);
+			}
+			else
+			{
+				// qDebug()<<"here\n";
+				menuBar()->setVisible(true);
+				statusBar()->setVisible(true);
+				timer->start(5000);
+			}
+		}
 	}
-	// return false;
 }
 
 //! [0]
@@ -135,7 +172,9 @@ bool ImageViewer::loadFile(const QString &fileName)
 
 	const QString message = tr("Opened \"%1\", %2x%3, Depth: %4")
 		.arg(QDir::toNativeSeparators(fName)).arg(image.width()).arg(image.height()).arg(image.depth());
-	statusBar()->showMessage(message, 3000);
+	statusBar()->showMessage(message);
+	// connect(timer, SIGNAL(timeout()), this, SLOT(nextImage()));
+	timer->start(5000);
 	return true;
 }
 
@@ -433,18 +472,23 @@ void ImageViewer::createActions()
 
 	QAction *openAct = fileMenu->addAction(tr("&Open..."), this, &ImageViewer::open);
 	openAct->setShortcut(QKeySequence::Open);
+	actions.push_back(openAct);
 
 	QAction *rightOpenAct = fileMenu->addAction(tr("&Next..."), this, &ImageViewer::nextImage);
 	rightOpenAct->setShortcut(tr("Right"));
+	actions.push_back(rightOpenAct);
 
 	QAction *fullScr = fileMenu->addAction(tr("&Full Screen..."), this, &ImageViewer::fullScreen);
 	fullScr->setShortcut(tr("F"));
+	actions.push_back(fullScr);
 
 	QAction *escFullScr = fileMenu->addAction(tr("&Full Screen..."), this, &ImageViewer::escapeFullScreen);
 	escFullScr->setShortcut(tr("esc"));
+	actions.push_back(escFullScr);
 
 	QAction *leftOpenAct = fileMenu->addAction(tr("&Prev..."), this, &ImageViewer::prevImage);
 	leftOpenAct->setShortcut(tr("Left"));
+	actions.push_back(leftOpenAct);
 
 	saveAsAct = fileMenu->addAction(tr("&Save As..."), this, &ImageViewer::saveAs);
 	saveAsAct->setEnabled(false);
@@ -457,6 +501,7 @@ void ImageViewer::createActions()
 
 	QAction *exitAct = fileMenu->addAction(tr("E&xit"), this, &QWidget::close);
 	exitAct->setShortcut(tr("Ctrl+Q"));
+	actions.push_back(exitAct);
 
 	QMenu *editMenu = menuBar()->addMenu(tr("&Edit"));
 
@@ -472,14 +517,17 @@ void ImageViewer::createActions()
 	zoomInAct = viewMenu->addAction(tr("Zoom &In (25%)"), this, &ImageViewer::zoomIn);
 	zoomInAct->setShortcut(QKeySequence::ZoomIn);
 	zoomInAct->setEnabled(false);
+	actions.push_back(zoomInAct);
 
 	zoomOutAct = viewMenu->addAction(tr("Zoom &Out (25%)"), this, &ImageViewer::zoomOut);
 	zoomOutAct->setShortcut(QKeySequence::ZoomOut);
 	zoomOutAct->setEnabled(false);
+	actions.push_back(zoomOutAct);
 
 	normalSizeAct = viewMenu->addAction(tr("&Normal Size"), this, &ImageViewer::normalSize);
 	normalSizeAct->setShortcut(tr("Ctrl+S"));
 	normalSizeAct->setEnabled(false);
+	actions.push_back(normalSizeAct);
 
 	viewMenu->addSeparator();
 
@@ -487,10 +535,12 @@ void ImageViewer::createActions()
 	fitToWindowAct->setEnabled(false);
 	fitToWindowAct->setCheckable(true);
 	fitToWindowAct->setShortcut(tr("Ctrl+F"));
+	actions.push_back(fitToWindowAct);
 
 	QMenu *helpMenu = menuBar()->addMenu(tr("&Help"));
-
-	helpMenu->addAction(tr("&About"), this, &ImageViewer::about);
+	QAction* aboutAct = helpMenu->addAction(tr("&About"), this, &ImageViewer::about);
+	actions.push_back(aboutAct);
+	this->addActions(actions);
 }
 //! [18]
 

@@ -7,6 +7,7 @@
 #include <QDragEnterEvent>
 #include <QDropEvent>
 #include <QEvent>
+#include <QTimer>
 #include <iostream>
 #include <deque>
 #if defined(QT_PRINTSUPPORT_LIB)
@@ -49,6 +50,7 @@ private slots:
 	void about();
 	void nextImage();
 	void prevImage();
+	void menuBarHide();
 
 private:
 	void createActions();
@@ -63,10 +65,11 @@ private:
 	void printFileList();
 	void dragEnterEvent(QDragEnterEvent*) override;
 	void dropEvent(QDropEvent*) override;
-	void enterEvent(QEvent*) override;
+	// void enterEvent(QEvent*) override;
 
 	QImage image;
 	QString imgPath;
+	QTimer *timer;
 	std::deque <QString> dq;
 	QLabel *imageLabel;
 	QScrollArea *scrollArea;
@@ -78,6 +81,8 @@ private:
 	QPrinter printer;
 #endif
 
+	QList<QAction*> actions;
+
 	QAction *saveAsAct;
 	QAction *printAct;
 	QAction *copyAct;
@@ -85,5 +90,10 @@ private:
 	QAction *zoomOutAct;
 	QAction *normalSizeAct;
 	QAction *fitToWindowAct;
+
+protected:
+	void mouseMoveEvent(QMouseEvent*) override;
+
+
 };
 //! [0]
