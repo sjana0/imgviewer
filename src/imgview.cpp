@@ -174,7 +174,10 @@ bool ImageViewer::loadFile(const QString &fileName)
 		.arg(QDir::toNativeSeparators(fName)).arg(image.width()).arg(image.height()).arg(image.depth());
 	statusBar()->showMessage(message);
 	// connect(timer, SIGNAL(timeout()), this, SLOT(nextImage()));
-	timer->start(5000);
+	if(timer->timerId() == -1)
+	{
+		timer->start(5000);
+	}
 	return true;
 }
 
