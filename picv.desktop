@@ -3,5 +3,5 @@ Name=picv
 Exec=/home/kchn/.local/bin/picv
 StartupNotify=true
 Terminal=false
-Icon=/home/kchn/imageviewer/ico.png
+Icon=/home/kchn/.local/share/icons/picv/ico.png
 Type=Application
