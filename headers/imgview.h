@@ -62,10 +62,8 @@ private:
 	void scaleImage(double factor);
 	void adjustScrollBar(QScrollBar *scrollBar, double factor);
 	bool isImg(const QString &fileName);
-	void printFileList();
 	void dragEnterEvent(QDragEnterEvent*) override;
 	void dropEvent(QDropEvent*) override;
-	// void enterEvent(QEvent*) override;
 
 	QImage image;
 	QString imgPath;
@@ -75,7 +73,8 @@ private:
 	QScrollArea *scrollArea;
 	double scaleFactor = 1;
 	bool isF = false;
-	// CusMenu *menu;
+	bool flag = true;
+	bool flg = true;
 
 #if defined(QT_PRINTSUPPORT_LIB) && QT_CONFIG(printer)
 	QPrinter printer;

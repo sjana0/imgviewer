@@ -2,7 +2,6 @@
 
 #include <QApplication>
 #include <QClipboard>
-// #include <QColorSpace>
 #include <QFileInfo>
 #include <QDir>
 #include <QFileDialog>
@@ -20,7 +19,7 @@
 #include <QStatusBar>
 #include <QMimeDatabase>
 #include <QMimeType>
-#include <QDebug>
+// #include <QDebug>
 
 #include <iostream>
 
@@ -57,8 +56,6 @@ ImageViewer::ImageViewer(QWidget *parent)
 	setCentralWidget(scrollArea);
 	timer = new QTimer(this);
 	connect(timer, SIGNAL(timeout()), this, SLOT(menuBarHide()));
-	// connect(timer, SIGNAL(timeout()), this, SLOT(menuBarHide()));
-	// timer->stop();
 	QWidget::setAttribute(Qt::WA_MouseTracking);
 
 	createActions();
@@ -72,17 +69,6 @@ bool ImageViewer::isImg(const QString &fileName)
 	reader.setAutoTransform(true);
 	const QImage newImage = reader.read();
 	return newImage.isNull();
-}
-
-void ImageViewer::printFileList()
-{
-	std::deque<QString>::iterator it = dq.begin();
-	while (it<dq.end())
-	{
-		QString s = *it;
-		qDebug()<<s.toStdString().c_str()<<"\n";
-		it++;
-	}
 }
 
 void ImageViewer::dragEnterEvent(QDragEnterEvent *e)
@@ -105,6 +91,7 @@ void ImageViewer::menuBarHide()
 	menuBar()->setVisible(false);
 	statusBar()->setVisible(false);
 	timer->stop();
+	flg = false;
 }
 
 void ImageViewer::mouseMoveEvent(QMouseEvent *event)
@@ -122,21 +109,22 @@ void ImageViewer::mouseMoveEvent(QMouseEvent *event)
 		if((y < menuh && y >= 0) || (y > statusposy && y < (statush + statusposy)))
 		{
 			// qDebug()<<"in zone\n"<<timer->timerId();
-			if(timer->timerId() != -1)
+			if(flg)
 			{
 				// qDebug()<<"active\n";
 				// timer->stop();
 				// timer->start();
-				timer->setInterval(5000);
+				timer->setInterval(4000);
 				// qDebug()<<"id = "<<timer->timerId()<<"\n";
-				// timer->start(5000);
+				// timer->start(4000);
 			}
 			else
 			{
 				// qDebug()<<"here\n";
 				menuBar()->setVisible(true);
 				statusBar()->setVisible(true);
-				timer->start(5000);
+				timer->start(4000);
+				flg = true;
 			}
 		}
 	}
@@ -156,11 +144,10 @@ bool ImageViewer::loadFile(const QString &fileName)
 								 .arg(QDir::toNativeSeparators(fileName), reader.errorString()));
 		return false;
 	}
-//! [2]
 
+//! [2]
 	setImage(newImage);
 
-	// QDirIterator itDir = new QDirIterator(imgFile.dir());
 	if(dq.empty())
 	{
 		setOths(fileName);
@@ -173,10 +160,10 @@ bool ImageViewer::loadFile(const QString &fileName)
 	const QString message = tr("Opened \"%1\", %2x%3, Depth: %4")
 		.arg(QDir::toNativeSeparators(fName)).arg(image.width()).arg(image.height()).arg(image.depth());
 	statusBar()->showMessage(message);
-	// connect(timer, SIGNAL(timeout()), this, SLOT(nextImage()));
-	if(timer->timerId() == -1)
+	if(flag)
 	{
-		timer->start(5000);
+		timer->start(4000);
+		flag = false;
 	}
 	return true;
 }
@@ -184,10 +171,7 @@ bool ImageViewer::loadFile(const QString &fileName)
 void ImageViewer::setImage(const QImage &newImage)
 {
 	image = newImage;
-	// if (image.colorSpace().isValid())
-		// image.convertToColorSpace(QColorSpace::SRgb);
 	imageLabel->setPixmap(QPixmap::fromImage(image));
-	// imageLabel->setAlignment(Qt::AlignHCenter | Qt::AlignVCenter);
 //! [4]
 	scaleFactor = 1.0;
 
@@ -217,7 +201,6 @@ void ImageViewer::setOths(const QString &filePath)
 	{
 		if(!isImg(fileInfoPath))
 		{
-			// qDebug()<<fileInfoPath.toStdString().c_str()<<"\n";
 			dq.push_back(fileInfoPath);
 		}
 		i++;
@@ -227,16 +210,13 @@ void ImageViewer::setOths(const QString &filePath)
 	fileInfoPath = list.at(i).filePath();
 	while(fileInfoPath != filePath && i >= 0)
 	{
-		// qDebug()<<reader.format()<<"\n";
 		if(!isImg(fileInfoPath))
 		{
-			// qDebug()<<fileInfoPath.toStdString().c_str()<<"\n";
 			dq.push_front(fileInfoPath);
 		}
 		i--;
 		fileInfoPath = list.at(i).filePath();
 	}
-	// printFileList();
 }
 //! [4]
 
@@ -309,10 +289,6 @@ static void initializeImageFileDialog(QFileDialog &dialog, QFileDialog::AcceptMo
 	nameFilters.append(allSuppFormatsFilter);
 	dialog.setNameFilters(nameFilters);
 	dialog.selectNameFilter(allSuppFormatsFilter);
-	
-	// dialog.selectMimeTypeFilter("image/jpeg");
-	// if (acceptMode == QFileDialog::AcceptSave)
-	//     dialog.setDefaultSuffix("jpg");
 }
 
 void ImageViewer::open()
@@ -341,7 +317,6 @@ void ImageViewer::nextImage()
 	imgPath = dq.front();
 	loadFile(imgPath);
 	scrollArea->verticalScrollBar()->setValue(0);
-	// scaleImage(0.0);
 	dq.pop_front();
 }
 
