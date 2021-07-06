@@ -106,7 +106,7 @@ void ImageViewer::mouseMoveEvent(QMouseEvent *event)
 		// qDebug()<<"statusposy: "<<statusposy<<" "<<"statush: "<<statush<<" "<<"menuh: "<<menuh<<"\n";
 		// qDebug()<<"enter: "<<event->type()<<" "<<"pos: "<<event->x()<<" "<<event->y()<<"\n\n";
 		// qDebug()<<"not null\n";
-		if((y <= menuh && y >= 0) || (y > statusposy && y <= (statush + statusposy)))
+		if((y <= menuh && y >= 0) || (y >= statusposy && y <= (statush + statusposy)))
 		{
 			// qDebug()<<"in zone\n"<<timer->timerId();
 			if(flg)
