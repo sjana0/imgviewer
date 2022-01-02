@@ -19,8 +19,7 @@
 #include <QStatusBar>
 #include <QMimeDatabase>
 #include <QMimeType>
-#include <string>
-#include <QDebug>
+// #include <QDebug>
 
 #include <iostream>
 
