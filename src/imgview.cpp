@@ -192,8 +192,8 @@ bool ImageViewer::fileInfoSortComp(const QFileInfo &filePathA, const QFileInfo &
 	QStringList B = filePathB.filePath().split('/');
 	QString fileA = A[A.size()-1].split('.')[0];
 	QString fileB = B[B.size()-1].split('.')[0];
-	a = std::stoi(fileA.split('.')[0].toStdString());
-	b = std::stoi(fileB.split('.')[0].toStdString());
+	a = fileA.split('.')[0].toInt();
+	b = fileB.split('.')[0].toInt();
 	return a < b;
 }
 
