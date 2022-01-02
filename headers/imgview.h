@@ -34,7 +34,7 @@ class ImageViewer : public QMainWindow
 public:
 	ImageViewer(QWidget *parent = nullptr);
 	bool loadFile(const QString &);
-	bool static imgNameCmp(const QFileInfo &filePathA, const QFileInfo &filePathB);
+	bool static fileInfoSortComp(const QFileInfo &filePathA, const QFileInfo &filePathB);
 
 private slots:
 	void open();

@@ -185,7 +185,7 @@ void ImageViewer::setImage(const QImage &newImage)
 		imageLabel->adjustSize();
 }
 
-bool ImageViewer::imgNameCmp(const QFileInfo &filePathA, const QFileInfo &filePathB)
+bool ImageViewer::fileInfoSortComp(const QFileInfo &filePathA, const QFileInfo &filePathB)
 {
 	int a = 1, b = 2;
 	QStringList A = filePathA.filePath().split('/');
@@ -208,7 +208,7 @@ void ImageViewer::setOths(const QString &filePath)
 	dir.setFilter(QDir::Files);
 	dir.setSorting(QDir::LocaleAware | QDir::Reversed);
 	QFileInfoList list = dir.entryInfoList();
-	std::sort(list.begin(), list.end(), imgNameCmp);
+	std::sort(list.begin(), list.end(),fileInfoSortComp);
 	int i = 0;
 	QString fileInfoPath = list.at(i).filePath();
 	while(fileInfoPath != filePath && i < list.size())
