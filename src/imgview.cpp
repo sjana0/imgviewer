@@ -19,7 +19,8 @@
 #include <QStatusBar>
 #include <QMimeDatabase>
 #include <QMimeType>
-// #include <QDebug>
+#include <string>
+#include <QDebug>
 
 #include <iostream>
 
@@ -184,6 +185,18 @@ void ImageViewer::setImage(const QImage &newImage)
 		imageLabel->adjustSize();
 }
 
+bool ImageViewer::imgNameCmp(const QFileInfo &filePathA, const QFileInfo &filePathB)
+{
+	int a = 1, b = 2;
+	QStringList A = filePathA.filePath().split('/');
+	QStringList B = filePathB.filePath().split('/');
+	QString fileA = A[A.size()-1].split('.')[0];
+	QString fileB = B[B.size()-1].split('.')[0];
+	a = std::stoi(fileA.split('.')[0].toStdString());
+	b = std::stoi(fileB.split('.')[0].toStdString());
+	return a < b;
+}
+
 void ImageViewer::setOths(const QString &filePath)
 {
 	imgPath = filePath;
@@ -193,8 +206,9 @@ void ImageViewer::setOths(const QString &filePath)
 	QDir dir = tempFileInfo->dir();
 	tempFileInfo->~QFileInfo();
 	dir.setFilter(QDir::Files);
-	dir.setSorting(QDir::Time | QDir::Reversed);
+	dir.setSorting(QDir::LocaleAware | QDir::Reversed);
 	QFileInfoList list = dir.entryInfoList();
+	std::sort(list.begin(), list.end(), imgNameCmp);
 	int i = 0;
 	QString fileInfoPath = list.at(i).filePath();
 	while(fileInfoPath != filePath && i < list.size())
