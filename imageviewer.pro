@@ -2,7 +2,7 @@ QT += core gui widgets
 requires(qtConfig(filedialog))
 qtHaveModule(printsupport): QT += printsupport
 
-HEADERS       = ./headers/imgview.h
+HEADERS       = ./includes/imgview.h
 SOURCES       = ./src/imgview.cpp \
 				./src/main.cpp
 
