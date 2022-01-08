@@ -27,22 +27,24 @@ clean_and_commit() {
         source ./.watcher_env
         temp=$((COMMIT+1))
         echo "export COMMIT=$temp" > ./.watcher_env
+        branch=$(git rev-parse --abbrev-ref HEAD)
         git add -A
         echo "Give a commit message:"
         read commit_msg
         if [[ -z "$commit_msg" ]]
         then
             git commit -S -am "auto commit msg $COMMIT"
-            git push -u origin main
+            git push -u origin $branch
         else
             git commit -S -am "$commit_msg"
-            git push -u origin main
+            git push -u origin $branch
         fi
     fi
     exit 0
 }
 
 make $*
+echo "done."
 trap clean_and_commit SIGINT SIGTERM
 inotifywait -e close_write -e move --quiet $(prereq_files $*)
 sleep 1
