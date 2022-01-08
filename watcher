@@ -30,13 +30,14 @@ clean_and_commit() {
         git add -A
         echo "Give a commit message:"
         read commit_msg
+        branch=$(git rev-parse --abbrev-ref HEAD)
         if [[ -z "$commit_msg" ]]
         then
             git commit -S -am "auto commit msg $COMMIT"
-            git push -u origin main
+            git push -u origin $branch
         else
             git commit -S -am "$commit_msg"
-            git push -u origin main
+            git push -u origin $branch
         fi
     fi
     exit 0
