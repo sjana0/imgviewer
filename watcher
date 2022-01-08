@@ -44,6 +44,7 @@ clean_and_commit() {
 }
 
 make $*
+echo "done."
 trap clean_and_commit SIGINT SIGTERM
 inotifywait -e close_write -e move --quiet $(prereq_files $*)
 sleep 1

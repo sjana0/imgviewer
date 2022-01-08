@@ -266,7 +266,6 @@ void ImageViewer::escapeFullScreen()
 	}
 }
 
-//! [1]
 
 static void initializeImageFileDialog(QFileDialog &dialog, QFileDialog::AcceptMode acceptMode)
 {
